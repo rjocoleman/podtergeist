@@ -14,7 +14,7 @@ module Podtergeist
       
       def existing(feed,params)
         create_channel(feed,params) unless feed_exists?(feed)
-        Dir.glob("#{params['local_directory']}/*").each do |file|
+        Dir.glob("#{params['local_directory']}/*.{m4a,mp3}").each do |file|
           append_item(feed,params,file)
         end
       end
