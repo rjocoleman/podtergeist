@@ -1,9 +1,9 @@
 # Podtergeist
 
-Command line interface to create or append to podcast-compatible rss feeds via arguments.
-Uses [taglib](http://robinst.github.io/taglib-ruby/) to pull some information directly from podcast files.
+Command line interface to create or append to podcast-compatible rss feeds via arguments.  
+Uses [taglib](http://robinst.github.io/taglib-ruby/) to pull some information directly from podcast files.  
 
-Please note; while this works it's a first release so the API may change drastically.
+Please note; while this works it's a first release so the API may change drastically.  
 
 ## Installation
 
@@ -23,5 +23,4 @@ Please note; while this works it's a first release so the API may change drastic
 
 ## TODO
 
-* valid basic RSS
-* more RSS
+* more RSS, itunes specific features (etc)

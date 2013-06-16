@@ -11,6 +11,13 @@ module Podtergeist
         create_channel(feed,params) unless feed_exists?(feed)
         append_item(feed,params)
       end
+      
+      def existing(feed,params)
+        create_channel(feed,params) unless feed_exists?(feed)
+        Dir.glob("#{params['local_directory']}/*").each do |file|
+          append_item(feed,params,file)
+        end
+      end
 
       private
 
@@ -36,11 +43,10 @@ module Podtergeist
       end
 
       # add item
-      def append_item(path,params)
-        local = params['local_file']
-        remote = "#{params['host']}/#{File.basename(local)}"
+      def append_item(path,params,file=params['file_file'])
+        remote = "#{params['host']}/#{File.basename(file)}"
 
-        TagLib::FileRef.open(local) do |fileref|
+        TagLib::FileRef.open(file) do |fileref|
           unless fileref.null?
             tag = fileref.tag
             properties = fileref.audio_properties
@@ -49,17 +55,17 @@ module Podtergeist
 
             item = RSS::Rss::Channel::Item.new
             item.title = tag.title
-            item.link = params['episode_link']
+            item.link = params['episode_link'] unless params['episode_link'].nil?
 
-            item.pubDate = Date.parse(params['episode_pubdate']).rfc822
+            item.pubDate = Date.parse(params['episode_pubdate']).rfc822 unless params['episode_pubdate'].nil?
 
             item.guid = RSS::Rss::Channel::Item::Guid.new
-            item.guid.content = params['episode_link']
+            item.guid.content = params['episode_link'] unless params['episode_link'].nil?
             item.guid.isPermaLink = true
 
             item.description = tag.title
 
-            item.enclosure = RSS::Rss::Channel::Item::Enclosure.new(remote, properties.length, MIME::Types.type_for(local).first)
+            item.enclosure = RSS::Rss::Channel::Item::Enclosure.new(remote, properties.length, MIME::Types.type_for(file).first)
 
             rss.items << item
 
@@ -69,6 +75,7 @@ module Podtergeist
           end
         end 
       end
+
     end
   end
 end
