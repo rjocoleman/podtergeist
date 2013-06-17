@@ -2,6 +2,7 @@ require 'rss/2.0'
 require 'rss/itunes'
 require 'mime/types'
 require 'taglib'
+require 'uri'
 
 module Podtergeist
   class Feed
@@ -44,7 +45,7 @@ module Podtergeist
 
       # add item
       def append_item(path,params,file=params['file_file'])
-        remote = "#{params['host']}/#{File.basename(file)}"
+        remote = URI.escape("#{params['host']}/#{File.basename(file)}")
 
         TagLib::FileRef.open(file) do |fileref|
           unless fileref.null?
