@@ -44,7 +44,7 @@ module Podtergeist
       end
 
       # add item
-      def append_item(path,params,file=params['file_file'])
+      def append_item(path,params,file=params['local_file'])
         remote = URI.escape("#{params['host']}/#{File.basename(file)}")
 
         TagLib::FileRef.open(file) do |fileref|
