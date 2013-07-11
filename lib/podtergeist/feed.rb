@@ -3,6 +3,7 @@ require 'rss/itunes'
 require 'mime/types'
 require 'taglib'
 require 'uri'
+require 'fileutils'
 
 module Podtergeist
   class Feed
@@ -15,7 +16,8 @@ module Podtergeist
 
       def existing(feed,params)
         shows = Dir.glob("#{params['local_directory']}/*.{m4a,mp3}")
-        create_channel(feed,params,shows.first) unless feed_exists?(feed)
+        FileUtils.rm(feed) if feed_exists?(feed)
+        create_channel(feed,params,shows.first)
         shows.each do |file|
           append_item(feed,params,file)
         end
