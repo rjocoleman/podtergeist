@@ -3,6 +3,7 @@ require 'rss/itunes'
 require 'mime/types'
 require 'taglib'
 require 'uri'
+require 'fileutils'
 
 module Podtergeist
   class Feed
@@ -12,10 +13,12 @@ module Podtergeist
         create_channel(feed,params) unless feed_exists?(feed)
         append_item(feed,params)
       end
-      
+
       def existing(feed,params)
-        create_channel(feed,params) unless feed_exists?(feed)
-        Dir.glob("#{params['local_directory']}/*.{m4a,mp3}").each do |file|
+        shows = Dir.glob("#{params['local_directory']}/*.{m4a,mp3}")
+        FileUtils.rm(feed) if feed_exists?(feed)
+        create_channel(feed,params,shows.first)
+        shows.each do |file|
           append_item(feed,params,file)
         end
       end
@@ -27,14 +30,24 @@ module Podtergeist
         File.exist?(path)
       end
 
-      # create 
-      def create_channel(path,params)
+      # create
+      def create_channel(path,params,file=params['local_file'])
         rss = RSS::Rss.new('2.0')
         channel = RSS::Rss::Channel.new
-      
-        channel.title = params['show_title']
-        channel.description = params['show_description']
-        channel.link = params['show_link']
+
+        # If we have an existing file we don't need to use supplied data.
+        file_metadata = {}
+        TagLib::FileRef.open(file) do |fileref|
+          tag = fileref.tag
+          file_metadata.update({
+            'show_title' => tag.album,
+            'show_description' => "#{tag.album} on #{tag.artist}"
+          })
+        end if file
+
+        channel.title = file_metadata['show_title'] || params['show_title']
+        channel.description = file_metadata['show_description'] || params['show_description']
+        channel.link = file_metadata['show_link'] || params['show_link']
 
         rss.channel = channel
 
@@ -64,7 +77,7 @@ module Podtergeist
             item.guid.content = params['episode_link'] unless params['episode_link'].nil?
             item.guid.isPermaLink = true
 
-            item.description = tag.title
+            item.description = tag.comment
 
             item.enclosure = RSS::Rss::Channel::Item::Enclosure.new(remote, properties.length, MIME::Types.type_for(file).first)
 
@@ -74,7 +87,7 @@ module Podtergeist
             file.write(rss.to_s)
             file.close
           end
-        end 
+        end
       end
 
     end
