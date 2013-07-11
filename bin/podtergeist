@@ -2,15 +2,15 @@
 require 'thor'
 require 'podtergeist'
 
-class PodtergeistCLI < Thor  
+class PodtergeistCLI < Thor
   default_task :help
 
   method_option :destination, :required => true, :type => :string
-  method_option :show_title, :required => true, :type => :string
-  method_option :show_link, :required => true, :type => :string
-  method_option :show_description, :required => true, :type => :string
   method_option :local_file, :required => true, :type => :string
   method_option :host, :required => true, :type => :string
+  # method_option :show_title, :required => true, :type => :string
+  method_option :show_link, :required => true, :type => :string
+  # method_option :show_description, :required => true, :type => :string
   method_option :episode_link, :required => true, :type => :string
   method_option :episode_pubdate, :required => true, :type => :string
 
@@ -20,13 +20,13 @@ class PodtergeistCLI < Thor
   end
 
   method_option :destination, :required => true, :type => :string
-  method_option :show_title, :required => true, :type => :string
+  # method_option :show_title, :required => true, :type => :string
   method_option :show_link, :required => true, :type => :string
-  method_option :show_description, :required => true, :type => :string
-  method_option :local_directory, :required => true, :type => :string
-  method_option :host, :required => true, :type => :string
+  # method_option :show_description, :required => true, :type => :string
   method_option :episode_link, :required => false, :type => :string
   method_option :episode_pubdate, :required => false, :type => :string
+  method_option :local_directory, :required => true, :type => :string
+  method_option :host, :required => true, :type => :string
 
   desc 'existing', 'Add items in existing directory to a podcast feed (creating the feed if does not exist)'
   def existing
