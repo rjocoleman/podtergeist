@@ -10,7 +10,7 @@ class PodtergeistCLI < Thor
   method_option :host, :required => true, :type => :string
   method_option :show_title, :required => false, :type => :string
   method_option :show_link, :required => true, :type => :string
-  method_option :show_description, :false => true, :type => :string
+  method_option :show_description, :required => false, :type => :string
   method_option :episode_link, :required => true, :type => :string
   method_option :episode_pubdate, :required => true, :type => :string
 
