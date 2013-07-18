@@ -15,7 +15,7 @@ module Podtergeist
       end
 
       def existing(feed,params)
-        shows = Dir.glob("#{params['local_directory']}/*.{m4a,mp3}")
+        shows = Dir.glob("#{params['local_directory']}/*.{m4a,mp3}").sort_by{ |f| File.ctime(f) }.reverse
         create_channel(feed,params,shows.first)
         shows.each do |file|
           append_item(feed,params,file)
