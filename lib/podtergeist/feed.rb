@@ -105,6 +105,7 @@ module Podtergeist
           TagLib::MP4::File.open(local_file) do |mp4|
             item_list_map = mp4.tag.item_list_map
             copyright = item_list_map["\xC2\xA9day"].to_string_list
+            Date.parse(copyright.first).rfc822
             return copyright.first
           end
         rescue
