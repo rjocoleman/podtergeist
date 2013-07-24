@@ -75,8 +75,8 @@ module Podtergeist
             item = RSS::Rss::Channel::Item.new
             item.title = tag.title
             item.link = params['episode_link'] unless params['episode_link'].nil?
-            if pub_date = params['episode_pubdate'] || pub_date = File.ctime(local_file).to_s
-              item.pubDate = Date.parse(pub_date).rfc822
+            if creation_time = file_creation_time(local_file, params['episode_pubdate'])
+              item.pubDate = Date.parse(creation_time).rfc822
             end
 
             item.guid = RSS::Rss::Channel::Item::Guid.new
@@ -97,6 +97,19 @@ module Podtergeist
 
       def write_rss_file!(path, rss, mode = 'w')
         File.open(path, mode) { |file| file.write(rss.to_s) }
+      end
+
+      private
+      def file_creation_time(local_file, default)
+        begin
+          TagLib::MP4::File.open(local_file) do |mp4|
+            item_list_map = mp4.tag.item_list_map
+            copyright = item_list_map["\xC2\xA9day"].to_string_list
+            return copyright.first
+          end
+        rescue
+          return default || File.ctime(local_file).to_s
+        end
       end
 
     end
