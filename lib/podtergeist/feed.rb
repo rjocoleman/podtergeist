@@ -79,10 +79,6 @@ module Podtergeist
               item.pubDate = Date.parse(creation_time).rfc822
             end
 
-            item.guid = RSS::Rss::Channel::Item::Guid.new
-            item.guid.content = params['episode_link'] unless params['episode_link'].nil?
-            item.guid.isPermaLink = true
-
             item.description = tag.comment
 
             remote = URI.escape("#{params['host']}/#{File.basename(local_file)}")
