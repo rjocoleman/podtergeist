@@ -4,6 +4,7 @@ require 'mime/types'
 require 'taglib'
 require 'uri'
 require 'fileutils'
+require 'pathname'
 
 module Podtergeist
   class Feed
@@ -81,11 +82,10 @@ module Podtergeist
 
             item.description = tag.comment
 
-            if params['host']
-              remote = URI.escape("#{File.basename(local_file)}")
-            else
-              remote = URI.escape("#{params['host']}/#{File.basename(local_file)}")
-            end
+            local_directory = Pathname.new(params['local_directory'])
+            webroot = Pathname.new(params['webroot'])
+            url = params['host'] + '/' + local_directory.relative_path_from(webroot).to_s
+            remote = URI.escape("#{url}/#{File.basename(local_file)}")
             item.enclosure = RSS::Rss::Channel::Item::Enclosure.new(
               remote, properties.length, MIME::Types.type_for(local_file).first
             )
