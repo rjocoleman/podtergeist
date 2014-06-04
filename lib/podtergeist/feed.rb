@@ -9,16 +9,16 @@ module Podtergeist
   class Feed
     class << self
 
-      def add(feed,params)
-        create_channel(feed,params) unless feed_exists?(feed)
-        append_item(feed,params)
+      def add(feed, params)
+        create_channel(feed, params) unless feed_exists?(feed)
+        append_item(feed, params)
       end
 
-      def existing(feed,params)
+      def existing(feed, params)
         shows = Dir.glob("#{params['local_directory']}/*.{m4a,mp3}").sort_by{ |f| File.ctime(f) }.reverse
-        create_channel(feed,params,shows.first)
+        create_channel(feed, params, shows.first)
         shows.each do |file|
-          append_item(feed,params,file)
+          append_item(feed, params, file)
         end
       end
 
@@ -30,7 +30,7 @@ module Podtergeist
       end
 
       # create
-      def create_channel(path,params,local_file=params['local_file'])
+      def create_channel(path, params, local_file=params['local_file'])
         rss = RSS::Rss.new('2.0')
         channel = RSS::Rss::Channel.new
 
@@ -45,7 +45,7 @@ module Podtergeist
       end
 
       # add item
-      def append_item(path,params,local_file=params['local_file'])
+      def append_item(path, params, local_file=params['local_file'])
         rss = RSS::Parser.parse(File.new(path))
         rss.items << rss_channel_item(local_file, params)
         write_rss_file!(path, rss)
@@ -81,7 +81,11 @@ module Podtergeist
 
             item.description = tag.comment
 
-            remote = URI.escape("#{params['host']}/#{File.basename(local_file)}")
+            if params['host']
+              remote = URI.escape("#{File.basename(local_file)}")
+            else
+              remote = URI.escape("#{params['host']}/#{File.basename(local_file)}")
+            end
             item.enclosure = RSS::Rss::Channel::Item::Enclosure.new(
               remote, properties.length, MIME::Types.type_for(local_file).first
             )

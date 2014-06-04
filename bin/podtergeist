@@ -2,35 +2,38 @@
 require 'thor'
 require 'podtergeist'
 
+Signal.trap("INT") do
+  puts "\nSIGINT recieved.. terminated."
+  exit 1
+end
+
 class PodtergeistCLI < Thor
   default_task :help
 
-  method_option :destination, :required => true, :type => :string
-  method_option :local_file, :required => true, :type => :string
-  method_option :host, :required => true, :type => :string
-  method_option :show_title, :required => false, :type => :string
-  method_option :show_link, :required => true, :type => :string
-  method_option :show_description, :required => false, :type => :string
-  method_option :episode_link, :required => true, :type => :string
-  method_option :episode_pubdate, :required => true, :type => :string
-
+  method_option :destination,      required: true,  type: :string
+  method_option :local_file,       required: true,  type: :string
+  method_option :host,             required: false, type: :string
+  method_option :show_title,       required: false, type: :string
+  method_option :show_link,        required: true,  type: :string
+  method_option :show_description, required: false, type: :string
+  method_option :episode_link,     required: true,  type: :string
+  method_option :episode_pubdate,  required: true,  type: :string
   desc 'add', 'Add item to a podcast feed (creating the feed if does not exist)'
   def add
-    Podtergeist::Feed.add(options[:destination],options)
+    Podtergeist::Feed.add(options[:destination], options)
   end
 
-  method_option :destination, :required => true, :type => :string
-  method_option :show_title, :required => false, :type => :string
-  method_option :show_link, :required => true, :type => :string
-  method_option :show_description, :required => false, :type => :string
-  method_option :episode_link, :required => false, :type => :string
-  method_option :episode_pubdate, :required => false, :type => :string
-  method_option :local_directory, :required => true, :type => :string
-  method_option :host, :required => true, :type => :string
-
+  method_option :destination,      required: true,  type: :string
+  method_option :show_title,       required: false, type: :string
+  method_option :show_link,        required: true,  type: :string
+  method_option :show_description, required: false, type: :string
+  method_option :episode_link,     required: false, type: :string
+  method_option :episode_pubdate,  required: false, type: :string
+  method_option :local_directory,  required: true,  type: :string
+  method_option :host,             required: false, type: :string
   desc 'existing', 'Add items in existing directory to a podcast feed (creating the feed if does not exist)'
   def existing
-    Podtergeist::Feed.existing(options[:destination],options)
+    Podtergeist::Feed.existing(options[:destination], options)
   end
 end
 
